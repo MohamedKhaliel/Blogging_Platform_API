@@ -8,3 +8,12 @@ class Blog(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     published_date = models.DateTimeField(auto_now_add=True)
     created_date = models.DateTimeField(auto_now_add=True)
+    Category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True)
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
