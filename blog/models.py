@@ -6,13 +6,13 @@ class Blog(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField() 
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    published_date = models.DateTimeField(auto_now_add=True)
+    published_date = models.DateTimeField(auto_now_add=False , null=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    Category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True)
+    category = models.ForeignKey('category', on_delete=models.CASCADE, null=True)
+    tags = models.ManyToManyField('Tag', related_name= 'blog')
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
 
 
 class Category(models.Model):

@@ -4,15 +4,15 @@ from .models import CustomUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'bio', 'profile_pic']
+        fields = ['username', 'email', 'bio', 'profile_pics']
         
-    def update(self, instance, validated_data):
-        instance.username = validated_data.get('username', instance.username)
-        instance.email = validated_data.get('email', instance.email)
-        instance.bio = validated_data.get('bio', instance.bio)
-        instance.profile_pic = validated_data.get('profile_pic', instance.profile_pic)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     instance.username = validated_data.get('username', instance.username)
+    #     instance.email = validated_data.get('email', instance.email)
+    #     instance.bio = validated_data.get('bio', instance.bio)
+    #     instance.profile_pics = validated_data.get('profile_pics', instance.profile_pics)
+    #     instance.save()
+    #     return instance
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

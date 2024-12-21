@@ -4,22 +4,12 @@ from .models import Blog , Category , Tag
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ['name' , 'blog']
+        fields = ['name']
 
     def create(self, validated_data):
         tag = Tag.objects.create(**validated_data)
         return tag
 
-class BlogSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True ,required=False)
-    class Meta:
-        model = Blog
-        fields = ['title', 'content', 'author', 'tags']
-
-        def create(self, validated_data):
-            blog = Blog.objects.create(**validated_data)
-            return blog
-        
 class Categoryserializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -29,3 +19,17 @@ class Categoryserializer(serializers.ModelSerializer):
         category = Category.objects.create(**validated_data)
         return category
     
+class BlogSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(many=True ,queryset=Tag.objects.all())
+    category = Categoryserializer(required=False)
+    class Meta:
+
+        model = Blog
+        fields = ['title', 'content', 'author', 'tags' , 'category']
+
+        def create(self, validated_data):
+            tags = validated_data.pop('tags', [])
+            blog = self.Meta.model.objects.create(**validated_data)
+            for tag in tags:
+                blog.tags.add(tag.id)
+            return blog

@@ -6,6 +6,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated 
+from django.contrib.auth import logout
+
 # Create your views here.
 
 class UserRegistrationView(APIView):
@@ -19,11 +21,13 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
-    permission_classes =[IsAdminUser]
+    permission_classes =[AllowAny]
     def post(self, request, *args, **kwargs):
-        users = CustomUser.objects.all()
-        serializer = UserLoginSerializer(users, many=True)
-        return Response(serializer.data, status=200)
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+        
 
 class UserListView(APIView):
     permission_classes = [IsAdminUser]
@@ -47,3 +51,10 @@ class UserProfileUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=200)
         return Response(serializer.errors, status=400)
+    
+
+class UserLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return Response(status=200)
