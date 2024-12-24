@@ -8,8 +8,8 @@ class Blog(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     published_date = models.DateTimeField(auto_now_add=False , null=True)
     created_date = models.DateTimeField(auto_now_add=True)
-    category = models.ForeignKey('category', on_delete=models.CASCADE, null=True)
-    tags = models.ManyToManyField('Tag', related_name= 'blog')
+    category = models.ForeignKey('category', on_delete=models.SET_NULL, null=True)
+    tags = models.ManyToManyField('Tag', related_name= 'blogs')
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)

@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework.views import  APIView
-from .serializers import BlogSerializer , TagSerializer , Categoryserializer
-from .models import Blog 
+from .serializers import BlogSerializer , TagSerializer , CategorySerializer
+from .models import Blog , Tag
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
+
 
 # Create your views here.
 class BlogCreateView(APIView):
@@ -48,7 +49,7 @@ class TagcreateView(APIView):
 class CategorycreateView(APIView):
     permission_classes = [IsAdminUser]
     def post(self, request, *args, **kwargs):
-        serializer = Categoryserializer(data=request.data)
+        serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
@@ -65,6 +66,12 @@ class BlogfilterationView(APIView):
     def get(self, request, *args, **kwargs):
         category = request.query_params.get('category', '')
         author = request.query_params.get('author', '')
-        blog = Blog.objects.filter(Category__name=category, author__username=author)
+        blog = Blog.objects.filter(Q(category__name=category)|Q(author__username=author))
         serializer = BlogSerializer(blog, many=True)
         return Response(serializer.data, status=200)
+    
+class TagDeleteView(APIView):
+    def delete(self, request, *args, **kwargs):
+        tag = Tag.objects.get(id=kwargs['id'])
+        tag.delete()
+        return Response(status=204)

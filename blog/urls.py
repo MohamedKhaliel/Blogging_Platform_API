@@ -1,5 +1,5 @@
 from django.urls import path 
-from .views import BlogCreateView , BlogDetailsView , BlogUpdateView , BlogDeleteView ,TagcreateView , CategorycreateView , SearchView
+from .views import BlogCreateView , BlogDetailsView , BlogUpdateView , BlogDeleteView ,TagcreateView , CategorycreateView , SearchView , BlogfilterationView , TagDeleteView
 
 urlpatterns = [
     path('create/', BlogCreateView.as_view(), name='create'),
@@ -9,4 +9,6 @@ urlpatterns = [
     path('tag/create/', TagcreateView.as_view(), name='tagcreate'),
     path('category/create/', CategorycreateView.as_view(), name='categorycreate'),
     path('search/', SearchView.as_view(), name='search'),
+    path('filter/', BlogfilterationView.as_view(), name='filter'),
+    path('tag/delete/<int:id>/', TagDeleteView.as_view(), name='tagdelete'),
 ]
