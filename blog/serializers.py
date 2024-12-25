@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Blog , Category , Tag
+from .models import Blog , Category , Tag 
+from django.utils.timezone import now 
 
 class TagSerializer(serializers.ListField):
     class Meta:
@@ -29,12 +30,20 @@ class CategorySerializer(serializers.ModelSerializer):
     
 class BlogSerializer(serializers.ModelSerializer):
     tags = TagSerializer(required=False)
+    publish_now = serializers.BooleanField(default=False, write_only=True) 
+
     class Meta:
         model = Blog
-        fields = ['title', 'content', 'author', 'tags' , 'category']
+        fields = ['title', 'content', 'author', 'tags' , 'category' , 'published_date', 'publish_now']
 
     def create(self, validated_data):
         tags = validated_data.pop('tags', [])if "tags" in validated_data else []
+        published_now= validated_data.pop('published_now', False)
+
+        if published_now:
+            validated_data['published_date'] = now()
+        else:
+            validated_data['published_date'] = None 
 
 
         blog = self.Meta.model.objects.create(**validated_data)
@@ -52,7 +61,12 @@ class BlogSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags', []) if "tags" in validated_data else []
+        published_now= validated_data.pop('published_now', False)
 
+        if published_now:
+            validated_data['published_date'] = now()
+        else:
+            validated_data['published_date'] = None 
 
         blog = super().update(instance, validated_data)
         
