@@ -13,7 +13,7 @@ from rest_framework.exceptions import NotFound
 class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user == obj.author
-
+ 
 # Create your views here.
 class BlogCreateView(APIView):
     def post(self, request, *args, **kwargs):
@@ -42,7 +42,7 @@ class BlogUpdateView(APIView):
             raise NotFound("Blog not found")
         
     def put(self, request, *args, **kwargs):
-        blog = Blog.objects.get(id=kwargs['id'])
+        blog = self.get_object(kwargs['id'])
         serializer = BlogSerializer(blog, partial=True, data=request.data)
         if serializer.is_valid():
             serializer.save()
