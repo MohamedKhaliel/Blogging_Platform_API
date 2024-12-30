@@ -30,21 +30,26 @@ class CategorySerializer(serializers.ModelSerializer):
     
 class BlogSerializer(serializers.ModelSerializer):
     tags = TagSerializer(required=False)
-    publish_now = serializers.BooleanField(default=False, write_only=True) 
-
+    publish_now = serializers.BooleanField(default=False, write_only=True, required=False) 
+    published_date = serializers.SerializerMethodField()
     class Meta:
         model = Blog
         fields = ['title', 'content', 'author', 'tags' , 'category' , 'published_date', 'publish_now']
 
+    def get_published_date(self, obj):
+        if obj.published_date:
+            return obj.published_date.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+             return None
+    
     def create(self, validated_data):
         tags = validated_data.pop('tags', [])if "tags" in validated_data else []
-        published_now= validated_data.pop('published_now', False)
+        published_now= validated_data.pop('publish_now', False)
 
         if published_now:
             validated_data['published_date'] = now()
         else:
             validated_data['published_date'] = None 
-
 
         blog = self.Meta.model.objects.create(**validated_data)
 
@@ -58,10 +63,9 @@ class BlogSerializer(serializers.ModelSerializer):
 
         return blog
 
-
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags', []) if "tags" in validated_data else []
-        published_now= validated_data.pop('published_now', False)
+        published_now= validated_data.pop('publish_now', False)
 
         if published_now:
             validated_data['published_date'] = now()

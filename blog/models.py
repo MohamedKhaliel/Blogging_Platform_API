@@ -12,8 +12,7 @@ class Blog(models.Model):
     tags = models.ManyToManyField('Tag', related_name= 'blogs')
 
 class Tag(models.Model):
-    name = models.CharField(max_length=100)
-
+    name = models.CharField(max_length=100 , unique=True , default="") 
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
